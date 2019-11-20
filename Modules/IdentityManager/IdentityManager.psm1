@@ -1,6 +1,6 @@
 ﻿
 
-Function Connect-OIM($AppServer,$AppName = "AppServer", $Credential,[switch] $useSSL){
+Function Connect-OIM($AppServer,$AppName = "AppServer", $Credential , [switch] $useSSL){
     
     # Creating URL string
         if($useSSL ){
@@ -31,10 +31,10 @@ Function Connect-OIM($AppServer,$AppName = "AppServer", $Credential,[switch] $us
 Function Disconnect-OIM($Session){
   
     # Disconnect
-        if($session -ne $null){
+        if($null -ne $session ){
             Invoke-RestMethod -Uri "$Global:OIM_BaseURL/auth/logout" -WebSession $session -Method Post| Out-Null
 
-        }elseif($Global:OIM_Session -ne $Null){
+        }elseif($null -ne $Global:OIM_Session){
             Invoke-RestMethod -Uri "$Global:OIM_BaseURL/auth/logout" -WebSession $Global:OIM_Session -Method Post | Out-Null
 
         }
