@@ -23,5 +23,11 @@ Start-OIMScript -ScriptName CCC_GetHostNameFromSystem -Parameters @("sasfdsa")
 
 Disconnect-OIM $con
 
+Connect-OIMSQL -servername sbx-IAMDB-9001.sandbox.local -database D2IMv7 -Cred $cred
+Run-OIMSQLQuery -sqlquery "select top 1 * from person"
 
 
+
+
+
+Set-OIMConfigParameter -FullPath "Custom\SourceSystems\YouForceAPI\UseLocalInputFiles" -Value "False"
