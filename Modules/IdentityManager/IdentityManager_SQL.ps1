@@ -27,7 +27,7 @@ Function Connect-OIMSQL($servername, $database, [PSCredential] $Cred ) {
 
 # function that executes sql commands against an existing Connection object; In pur case
 # the connection object is saved by the ConnectToDB function as a global variable
-function Run-OIMSQLQuery {
+function Invoke-OIMSQLQuery {
     # define parameters
     param(
      
@@ -76,7 +76,9 @@ function Run-OIMSQLQuery {
     }
 }
 
-
+<#
 $cred = Get-Credential 
 Connect-OIMSQL -
-Run-OIMSQLQuery -sqlquery "select top 1 * from person"
+Invoke-OIMSQLQuery -sqlquery "select top 1 * from person"
+
+#>

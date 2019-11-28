@@ -46,16 +46,24 @@ Function Disconnect-OIM([WebRequestSession] $Session = $Global:OIM_Session) {
 
 }
 
-Function Get-OIMObject($ObjectName, $Where, $OrderBy, $Session = $Global:OIM_Session, [switch]$First, [switch]$Full) {
+Function Get-OIMObject($Object, $ObjectName, $Where, $OrderBy, $Session = $Global:OIM_Session, [switch]$First, [switch]$Full, $limit= 0, $offset =0) {
 
     # Read 
 
-    $dicBody = @{where = "$Where" }
+    $dicBody = @{
+        where = "$Where" 
+        limit = $limit
+        offset = $offset
+        }
     if (-not [string]::IsNullOrEmpty($OrderBy)) { $dicBody.Add("OrderBy", $OrderBy) }
 
     $body = $dicBody | ConvertTo-Json
-    $result = Invoke-RestMethod -Uri "$Global:OIM_BaseURL/api/entities/$($ObjectName)?loadType=ForeignDisplays" -WebSession $session -Method Post -Body $body -ContentType application/json
+    if( $object.URI -ne $null){
+        return Get-OIMObjectfromURI -uri $object.URI   -Session $Session 
 
+    }else{
+        $result = Invoke-RestMethod -Uri "$Global:OIM_BaseURL/api/entities/$($ObjectName)?loadType=ForeignDisplays" -WebSession $session -Method Post -Body $body -ContentType application/json
+    }
         
     forEach ($item in $result) {
            
@@ -67,6 +75,9 @@ Function Get-OIMObject($ObjectName, $Where, $OrderBy, $Session = $Global:OIM_Ses
         else {
             $temp = New-Object -TypeName PSObject -ArgumentList $item.Values 
             $temp | Add-Member -Name uri -Value $item.uri -MemberType NoteProperty
+            $temp | Add-Member -Name links -Value $item.Links -MemberType NoteProperty
+            $temp | Add-Member -MemberType ScriptProperty -Name entity -Value {if($this.uri -match "(.*)/api/entity/(.*)/"){$matches[2]}else{"unknown"}} 
+            $temp | Add-Member -MemberType ScriptProperty -Name UID -Value {if($this.uri -match "(.*)/api/entity/(.*)/(.*)"){$matches[3]}else{"unknown"}} 
             $temp
         }
         if ($first) { return }
@@ -80,7 +91,10 @@ Function Get-OIMObjectfromURI($uri, $Session = $Global:OIM_Session) {
         $itemfull = Invoke-RestMethod -Uri "$Global:OIM_BaseURL/$uri" -WebSession $session -Method Get -ContentType application/json  
                 
         $temp = New-Object -TypeName PSObject -ArgumentList $itemfull.Values 
-        $temp | Add-Member -Name uri -Value $itemfull.uri -MemberType NoteProperty
+        $temp | Add-Member -Name URI -Value $itemfull.uri -MemberType NoteProperty
+        $temp | Add-Member -MemberType ScriptProperty -Name Entity -Value {if($this.uri -match "(.*)/api/entity/(.*)/(.*)"){$matches[2]}else{"unknown"}} 
+        $temp | Add-Member -MemberType ScriptProperty -Name UID -Value {if($this.uri -match "(.*)/api/entity/(.*)/(.*)"){$matches[3]}else{"unknown"}} 
+        $temp | Add-Member -Name links -Value $itemfull.Links -MemberType NoteProperty
         $temp
     }
 
@@ -178,7 +192,47 @@ Function Start-OIMEvent($Object, $EventName, [hashtable]$Parameters, $Session = 
 
 }
 
+
+Function Set-OIMConfigParameter($FullPath,$value){
+
+    
+    $obj =  Get-OIMObject -ObjectName DialogConfigParm -Where "FullPath = '$FullPath' "  -First -Full
+    Update-OIMObject -Object $obj -Properties @{Value = "$value"}
+
+
+}
+
+
+
+Function Start-OIMSyncProject($SyncName){
+    #DPRShell
+    
+    $obj =  Get-OIMObject -ObjectName DialogSchedule -Where "displayname = '$SyncName "  -First -Full
+    
+    Start-OIMEvent  -Object $obj -EventName run -Parameters @{}
+
+
+}
+
+
+
+Function ConvertFrom-OIMDate([string] $Date){
+  [datetime]::Parse( $Date)
+
+}
+
+Function ConvertTo-OIMDate([DateTime] $Date){
+    $Date.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", [cultureinfo]::CurrentCulture)
+
+}
+
 <#
+
+                $time = [datetime]::ParseExact( "2019-06-04T08:04:15.7500000Z","yyyy-MM-ddTHH:mm:ss.fff", [cultureinfo]::CurrentCulture)
+           
+
+ConvertTo-OIMDate(ConvertFrom-OIMDate("2019-06-04T08:04:15.7500000Z"))
+
 200 Success
 204 Success. No content returned.
 401 Unauthorized. To use the One Identity Manager REST API, you first have to authenticate it against the application server.
