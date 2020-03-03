@@ -1,4 +1,3 @@
-# Configuration 
 
 $dicEnvironment = @{
     DEV = @{Server="WIN-DMTVK12KPU5";AppName="D1IMAppServer"}
@@ -11,8 +10,8 @@ $dicEnvironment = @{
 
 if([string]::isnullorEmpty(  $SelectedEnvironment)){
     $SelectedEnvironment = $dicEnvironment | Out-GridView  -OutputMode Single 
-    $OIMServer   = $SelectedEnvironment["Server"]
-    $OIMAppNamme = $SelectedEnvironment["AppName"] 
+    $OIMServer   = $SelectedEnvironment.Value["Server"]
+    $OIMAppName = $SelectedEnvironment.Value["AppName"] 
     $cred = Get-Credential -Message "Crendtials for environment $($SelectedEnvironment.Name)"
 }
 <#
@@ -20,8 +19,19 @@ $SelectedEnvironment = $null
 #>
 
 
+$env:PSModulePath += ";\\jumbo.local\hkt-usrdata\r\roblooman\Documents\GitHub\IdentityManager\Modules"
+Import-Module IdentityManager -force
+$con = Connect-OIM -AppServer $OIMServer  -AppName $OIMAppName   -Credential $cred
 
-$con = Connect-OIM -AppServer $OIMServer  -AppName $OIMAppNamme   -Credential $cred
+Get-OIMObject -ObjectName UNSAccountB -Where "cn like '0042%' "   -Full | Export-Csv -path c:\temp\UNSAccountB_0042_Start.csv 
+Get-OIMObject -ObjectName UNSAccountB -Where "cn like '9999%' "   -Full | Export-Csv -path c:\temp\UNSAccountB_9999_Start.csv 
+Get-OIMObject -ObjectName UNSGroupB -Where "cn like '%0042' "   -Full | Export-Csv -path c:\temp\UNSGroupB_0042_Start.csv 
+Get-OIMObject -ObjectName UNSGroupB -Where "cn like '%9999' "   -Full | Export-Csv -path c:\temp\UNSGroupB_9999_Start.csv 
+Get-OIMObject -ObjectName Org -Where "CustomProperty03 = '0042' "   -Full | Export-Csv -path c:\temp\Org_0042_Start.csv 
+Get-OIMObject -ObjectName Org -Where "CustomProperty03 = '9999' "   -Full | Export-Csv -path c:\temp\Org_9999_Start.csv 
+
+
+<#
 
 Get-OIMObject -ObjectName Person -Where "Lastname like 'Lo%' "   -First -Full
 Get-OIMObject -ObjectName department -Where "Lastname like 'Lo%' "   -First -Full
@@ -47,9 +57,4 @@ Invoke-OIMSQLQuery -sqlquery "select top 1 * from person"
 
 
 
-
-
-Set-OIMConfigParameter -FullPath "Custom\SourceSystems\YouForceAPI\UseLocalInputFiles" -Value "False"
-
-Get-OIMObject -ObjectName CCC_HRFunction -Where "ccc_medewerker like '9%'"
-#select UID_ccc_HRfunction from CCC_HRFunction where ccc_medewerker like '" + personnel_number + "%'"
+#>

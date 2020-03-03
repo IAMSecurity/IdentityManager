@@ -8,7 +8,7 @@
     C:\PS> Connect-OIM -AppServer xxx.company.local -UseSSL
     This example starts a connection to https://xxx.company.local/Appserver
 #>
-Function Connect-OIM($AppServer, $AppName = "AppServer", [PSCredential] $Cred , [switch] $useSSL) {
+Function Connect-OIM($AppServer, $AppName = "AppServer", [PSCredential] $Credential , [switch] $useSSL) {
     
     # Creating URL string
     if ($useSSL ) {
@@ -181,7 +181,7 @@ Function Start-OIMMethod($Object, $MethodName, [array]$Parameters, $Session = $G
 }
 
 
-Function Start-OIMEvent($Object, $EventName, [hashtable]$Parameters, $Session = $Global:OIM_Session) {
+Function Start-OIMEvent($Object, $EventName, [hashtable]$Parameters = @{}, $Session = $Global:OIM_Session) {
 
     # Read 
     $body = @{parameters = $Parameters } | ConvertTo-Json
@@ -217,8 +217,9 @@ Function Start-OIMSyncProject($SyncName){
 
 
 Function ConvertFrom-OIMDate([string] $Date){
-  [datetime]::Parse( $Date)
-
+    if(-not [string]::IsNullOrEmpty($date )){
+        [datetime]::Parse( $Date)
+    }
 }
 
 Function ConvertTo-OIMDate([DateTime] $Date){

@@ -220,6 +220,7 @@ Function Save-rExcelObjectRange {
             $csv = $global:excel.Workbooks.Open($tempPath)      
             Write-Verbose "Copy to workbook" 
             Try{
+                
                 $sheet = $WorkBook.Sheets.Item($SheetName)
                 
                 $range = $sheet.Range( $RangeName ) 

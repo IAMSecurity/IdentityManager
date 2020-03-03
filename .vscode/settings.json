@@ -1,3 +1,5 @@
 {
-    "editor.foldingStrategy": "indentation"
+    "editor.foldingStrategy": "indentation",
+    "workbench.editor.limit.enabled": true,
+    "workbench.editor.limit.value": 5
 }

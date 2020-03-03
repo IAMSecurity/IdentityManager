@@ -1,4 +1,5 @@
-﻿Function Get-OIMPerson($Object, $UID, $CentralAccount,$PersonnelNumber, $FirstName,$Lastname, [switch] $full,[switch] $first){
+﻿
+Function Get-OIMPerson($Object, $UID, $CentralAccount,$PersonnelNumber, $FirstName,$Lastname, [switch] $full,[switch] $first){
 
     $arWhere = @()
     if(-not [string]::IsNullOrEmpty($Object)){
