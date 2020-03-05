@@ -12,7 +12,7 @@
 RootModule = 'IdentityManager.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.1'
+ModuleVersion = '0.9.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -66,10 +66,15 @@ Copyright = '(c) Rob Looman. All rights reserved.'
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-# NestedModules = @()
+NestedModules = @(
+    'IdentityManager_CMD.ps1',
+    'IdentityManager_Person.ps1',
+    'IdentityManager_SQL.ps1'
+
+)
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @("Connect-OIM","Get-OIMObject")
+FunctionsToExport = @("Connect-OIM","Get-OIMObject","Install-OIMTransportFiles")
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

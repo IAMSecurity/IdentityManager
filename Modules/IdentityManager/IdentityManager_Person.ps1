@@ -34,7 +34,5 @@ Function Get-OIMPerson($Object, $UID, $CentralAccount,$PersonnelNumber, $FirstNa
     Get-OIMObject -ObjectName Person -Where $Where -full:$full -first:$first
 }
 
-$obj = Get-OIMPerson -Lastname Laagland
-Get-OIMPerson  -Object $obj -full
- -FirstName test%
+
 

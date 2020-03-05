@@ -1,1 +1,3 @@
-Copy-Item -Path "$(Split-Path -parent $PSCommandPath)\Modules" -Destination $Home\Documents\WindowsPowerShell -Force -Recurse
+$ModulePath  = "$(Split-Path -parent $PSCommandPath)\Modules"
+$ModulePath = "$env:HOMEDRIVE\Documents\GitHub\IdentityManager\Modules"
+Copy-Item -Path  $ModulePath -Destination $env:HOMEDRIVE\Documents\WindowsPowerShell -Force -Recurse

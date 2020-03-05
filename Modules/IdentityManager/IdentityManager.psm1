@@ -1,4 +1,5 @@
 ﻿
+
 <#
 .SYNOPSIS
    Connect to a One Identity Manager REST API server
@@ -226,6 +227,8 @@ Function ConvertTo-OIMDate([DateTime] $Date){
     $Date.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", [cultureinfo]::CurrentCulture)
 
 }
+
+
 
 <#
 
