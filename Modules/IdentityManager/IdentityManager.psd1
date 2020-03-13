@@ -74,7 +74,25 @@ NestedModules = @(
 )
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @("Connect-OIM","Get-OIMObject","Install-OIMTransportFiles")
+FunctionsToExport = @(
+    #Main
+    "Connect-OIM",
+    "Disconnect-OIM",
+    "Get-OIMObject",
+    "New-OIMObject",
+    "Remove-OIMObject",
+    "Add-OIMObjectMember",
+    "Remove-OIMObjectMember",
+    "Set-OIMConfigParameter",
+    #CMD
+    "Install-OIMTransportFiles",
+    "Start-OIMScript",
+    "Start-OIMMethod",
+    "Start-OIMEvent",
+    "Start-OIMScript",
+    #SQL
+    "Connect-OIMSQL",
+    "Invoke-OIMSQLQuery")
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

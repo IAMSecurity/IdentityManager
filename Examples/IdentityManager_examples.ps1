@@ -1,12 +1,14 @@
 # Configuration 
+$RealseFolder = "C:\Temp\" 
+$ProgramsFolder = "C:\Temp\One Identity Manager v8.1"
+$DatabaseConnectionString= "Data Source=WIN-DMTVK12KPU5;Initial Catalog=D2IMv7;User Id=sa_d1im;Password=Passw0rd!;"
+
 
 $dicEnvironment = @{
-    DEV = @{Server="WIN-DMTVK12KPU5";AppName="D1IMAppServer"}
-    TST = @{Server="sbx-iam-9001.sandbox.local";AppName="D1IMAppServer"}
-    ACC = @{Server="abx-iam-8001.accbox.local";AppName="D1IMAppServer"}
-    PRD = @{Server="HKT-iam-0001.jumbo.local";AppName="D1IMAppServer"}
-
-
+    "1_DEV" = @{Server="WIN-DMTVK12KPU5";AppName="D1IMAppServer";Database="D2IMv7"}
+    "2_TST" = @{Server="sbx-iam-9001.sandbox.local";AppName="D1IMAppServer";Database="D2IMv7"}
+    "3_ACC" = @{Server="abx-iam-8001.accbox.local";AppName="D1IMAppServer";Database="D2IMv7"}
+    "4_PRD" = @{Server="HKT-iam-0001.jumbo.local";AppName="D1IMAppServer";Database="D1IMv7"}
 }
 
 if([string]::isnullorEmpty(  $SelectedEnvironment)){
@@ -18,14 +20,17 @@ if([string]::isnullorEmpty(  $SelectedEnvironment)){
 <#
 $SelectedEnvironment = $null
 #>
-
+Import-Module IdentityManager
 
 
 $con = Connect-OIM -AppServer $OIMServer  -AppName $OIMAppNamme   -Credential $cred
 
 Get-OIMObject -ObjectName Person -Where "Lastname like 'Lo%' "   -First -Full
 Get-OIMObject -ObjectName department -Where "Lastname like 'Lo%' "   -First -Full
+Get-OIMObject -ObjectName CCC_HRFunction -Where "ccc_medewerker like '9%'"
 Get-OIMObjectfromURI -uri "/D1IMAppServer/api/entity/Person/604b2bad-a34c-4c58-a0d8-6ea86e61ba5c" 
+
+Set-OIMConfigParameter -FullPath "Custom\SourceSystems\YouForceAPI\UseLocalInputFiles" -Value "False"
 
 New-OIMObject -ObjectName Person -Properties @{Firstname="test";Lastname="test"}
 
@@ -43,26 +48,18 @@ Start-OIMScript -ScriptName CCC_GetHostNameFromSystem -Parameters @("sasfdsa")
 Disconnect-OIM $con
 
 Connect-OIMSQL -servername sbx-IAMDB-9001.sandbox.local -database D2IMv7 -Cred $cred
+
+Connect-OIMSQL -servername HKT-IAMDB-0001.jumbo.local -database D1IMv7
+
+$CredProdDB = Get-Credential
+Connect-OIMSQL -servername HKT-IAMDB-0001.jumbo.local -database D1IMv7 -Cred $CredProdDB
+Invoke-OIMSQLQuery -sqlquery "select top 1 * from Org"
+
 Invoke-OIMSQLQuery -sqlquery "select top 1 * from person"
 
 
+Install-OIMTransportFiles -TransportFile  $TransportFile -ProgramsFolder $ProgramsFolder  -DatabaseConnectionString $DatabaseConnectionString -Credential $Credential
 
 
 
-Set-OIMConfigParameter -FullPath "Custom\SourceSystems\YouForceAPI\UseLocalInputFiles" -Value "False"
 
-Get-OIMObject -ObjectName CCC_HRFunction -Where "ccc_medewerker like '9%'"
-#select UID_ccc_HRfunction from CCC_HRFunction where ccc_medewerker like '" + personnel_number + "%'"
-
-
-$TransportFile = "C:\Temp\20200203 R10 Update Password fix.zip" 
-$ProgramsFolder = "C:\Temp\One Identity Manager v8.1"
-$DatabaseConnectionString= "Data Source=WIN-DMTVK12KPU5;Initial Catalog=D2IMv7;User Id=sa_d1im;Password=Passw0rd!;"
- #$Credential = Get-Credential
- . Modules\IdentityManager\IdentityManager_CMD.ps1
-$process = Install-OIMTransportFiles -TransportFile  $TransportFile -ProgramsFolder $ProgramsFolder  -DatabaseConnectionString $DatabaseConnectionString -Credential $Credential
-$process.ExitCode
-
-$obj = Get-OIMPerson -Lastname Laagland
-Get-OIMPerson  -Object $obj -full
- -FirstName test%
