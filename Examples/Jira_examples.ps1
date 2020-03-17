@@ -9,6 +9,7 @@ $JiraURL = "jumbo-supermarkten.atlassian.net"
 $issues = Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/search?jql=issuetype in (Bug, Story) AND project = IAMD AND assignee not in (EMPTY) and Sprint in openSprints()"-WebSession $Global:JC_session -Method GET  
 ForEach($issue in $issues.issues){
     $issue.key
+    $issue.fields.Status.Name
     #New-OIMObject -ObjectName DialogTag -Properties @{Ident_DialogTag=$issue.key;TagType="CHANGE";description=$issue.fields.summary}
 
 }
