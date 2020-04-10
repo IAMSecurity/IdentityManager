@@ -84,6 +84,7 @@ FunctionsToExport = @(
     "Add-OIMObjectMember",
     "Remove-OIMObjectMember",
     "Set-OIMConfigParameter",
+    "Update-OIMObject",
     #CMD
     "Install-OIMTransportFiles",
     "Start-OIMScript",

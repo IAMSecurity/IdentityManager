@@ -72,6 +72,79 @@ Function Get-JiraComments($ID, $Session = $global:JC_Session) {
 
 }
 
+Function Get-ConfluenceSpaces($Session = $global:JC_Session){
+
+    $results = Invoke-RestMethod -Uri "$Global:JC_BaseURL/wiki/rest/api/space" -WebSession $session -Method GET  -AllowUnencryptedAuthentication
+   
+    $results.Results
+}
+Function Get-ConfluencePage($title, $spaceId, $Session = $global:JC_Session){
+    $dicbody = @{
+        Title = $title
+        Type = "page"
+        SpaceKey = $spaceId
+        
+        Status = "current"
+       
+    }
+    $body = ConvertTo-Json $dicbody 
+    $body.toString()
+  Invoke-RestMethod -Uri "$Global:JC_BaseURL/wiki/rest/api/content" -Body $body.toString() -WebSession $session  -Method GET  -AllowUnencryptedAuthentication
+
+
+  
+ 
+}
+
+Function New-ConfluencePage ($id = "",$spaceId,$ancestorsID, $Title, $Session = $global:JC_Session) {
+
+
+    # Read 
+        $dicbody = @{
+            id = "5200"
+            title = $title
+            type = "page"
+            space = @{
+                key = $spaceId
+            }
+            status = "current"
+            ancestors =@(@{
+                
+                id = $ancestorsID
+            })
+            body = @{
+                view = @{
+                    value = "<P>test</P>"
+                    representation = "view"
+                }
+            }
+        }
+        $headers =  @{
+            Accept = "application/json" 
+        "Content-Type" ="application/json" }
+
+        $body = ConvertTo-Json $dicbody 
+        $body.toString()
+      Invoke-RestMethod -Uri "$Global:JC_BaseURL/wiki/rest/api/content" -Body $body.toString() -WebSession $session -Headers $headers -Method POST  -AllowUnencryptedAuthentication
+   
+
+}
+
+Function Add-ConfluenceAttachement($id,$file, $Session = $global:JC_Session){
+
+    $results = Invoke-RestMethod -Uri "$Global:JC_BaseURL/wiki/rest/api/content/$id/child/attachment" -WebSession $session -Method POST -Body [convert]::ToBase64String((get-content  $file -Encoding  ))   -AllowUnencryptedAuthentication
+   
+    $results.Results
+}
+<#
+$id = 963871283
+$file = "\\jumbo.local\HKT-UsrFolders$\roblooman\Desktop\Firewall\FirewallAanpassing_IAM-ABX_SAP-ABXv2.xlsx"
+Add-ConfluenceAttachement -Id 963871283 -File $file
+
+963871283
+New-ConfluencePage -SpaceID I -AncestorsID 923861135 -title "Test"
+
+#>
 
 
 <# Confluence download PDF 

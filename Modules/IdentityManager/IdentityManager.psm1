@@ -20,21 +20,26 @@ Function Connect-OIM($AppServer, $AppName = "AppServer", [PSCredential] $Credent
     }
 
     # Creating connection string
-    if ($null -eq $Cred ) {
+    if ($null -eq $Credential ) {
         #Single sign
         $authdata = @{AuthString = "Module=RoleBasedADSAccount" }
     }
     else {
-        $user = $Cred.Username
-        $Pass = $Cred.GetNetworkCredential().password
+        $user = $Credential.Username
+        $Pass = $Credential.GetNetworkCredential().password
         $authdata = @{AuthString = "Module=DialogUser;User=$user;Password=$Pass" }
 
     }
     $authJson = ConvertTo-Json $authdata -Depth 2
 
     # Connecting
-    Invoke-RestMethod -Uri "$Global:OIM_BaseURL/auth/apphost" -Body $authJson.ToString() -Method Post -UseDefaultCredentials -Headers @{Accept = "application/json" } -SessionVariable session | Out-Null
+	If($psversiontable.PSVersion.Major  -gt 6){
+        Invoke-RestMethod -Uri "$Global:OIM_BaseURL/auth/apphost" -Body $authJson.ToString() -Method Post -UseDefaultCredentials -Headers @{Accept = "application/json" }  -SessionVariable session -AllowUnencryptedAuthentication| Out-Null
+   }else{
+       Invoke-RestMethod -Uri "$Global:OIM_BaseURL/auth/apphost" -Body $authJson.ToString() -Method Post -UseDefaultCredentials -Headers @{Accept = "application/json" }  -SessionVariable session | Out-Null
 
+   }
+  
     $Global:OIM_Session = $session
     $session 
 }
@@ -125,7 +130,7 @@ Function Remove-OIMObject($Object, $Session = $Global:OIM_Session) {
 
     # Read 
     $uri = Get-OIMURI $object.Uri     
-    Invoke-RestMethod -Uri "$Global:OIM_BaseURL/$uri" -WebSession $session -Method Delete -ContentType application/json 
+    Invoke-RestMethod -Uri "$Global:OIM_BaseURL$uri" -WebSession $session -Method Delete -ContentType application/json 
 
 }
 
@@ -134,7 +139,7 @@ Function Update-OIMObject($Object, [hashtable] $Properties, $Session = $Global:O
     # Read 
     $uri = Get-OIMURI $object.Uri
     $body = @{values = $Properties } | ConvertTo-Json
-    Invoke-RestMethod -Uri $uri -WebSession $Session -Method Put -Body $body -ContentType application/json
+    Invoke-RestMethod -Uri "$Global:OIM_BaseURL$uri" -WebSession $Session -Method Put -Body $body -ContentType application/json
 
 }
 
