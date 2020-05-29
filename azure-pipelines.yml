@@ -7,19 +7,26 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'Test Pool'
+jobs:  
+- deployment: VMDeploy
+  displayName: web
+  environment:
+    name:  'Test environment'
+    resourceType: VirtualMachine
+    tags: TEST
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - script: echo Hello, world!
+            displayName: 'Run a one-line script'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-  
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: '"Test" | Out-File C:\Windows\Temp\test.log'
+          - script: |
+              echo Add other tasks to build, test, and deploy your project.
+              echo See https://aka.ms/yaml
+            displayName: 'Run a multi-line script'
+            
+          - task: PowerShell@2
+            inputs:
+              targetType: 'inline'
+              script: '"Test" | Out-File C:\Windows\Temp\test.log'
