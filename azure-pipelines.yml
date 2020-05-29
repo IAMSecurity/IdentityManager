@@ -13,7 +13,6 @@ jobs:
   environment:
     name:  'Test environment'
     resourceType: VirtualMachine
-    tags: TEST
   strategy:
     runOnce:
       deploy:
