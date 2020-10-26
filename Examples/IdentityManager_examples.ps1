@@ -13,8 +13,8 @@ $dicEnvironment = @{
 
 if([string]::isnullorEmpty(  $SelectedEnvironment)){
     $SelectedEnvironment = $dicEnvironment | Out-GridView  -OutputMode Single 
-    $OIMServer   = $SelectedEnvironment["Server"]
-    $OIMAppNamme = $SelectedEnvironment["AppName"] 
+    $OIMServer   = $SelectedEnvironment.Value["Server"]
+    $OIMAppNamme = $SelectedEnvironment.Value["AppName"] 
     $cred = Get-Credential -Message "Crendtials for environment $($SelectedEnvironment.Name)"
 }
 <#
@@ -57,9 +57,24 @@ Invoke-OIMSQLQuery -sqlquery "select top 1 * from Org"
 
 Invoke-OIMSQLQuery -sqlquery "select top 1 * from person"
 
-
-Install-OIMTransportFiles -TransportFile  $TransportFile -ProgramsFolder $ProgramsFolder  -DatabaseConnectionString $DatabaseConnectionString -Credential $Credential
-
-
+$TransportFile = "C:\Temp\SHARED_VM\1_Transport-1566_v1.0.zip"
+Install-OIMTransportFiles -TransportFile  $TransportFile -ProgramsFolder $ProgramsFolder  -DatabaseConnectionString $DatabaseConnectionString -Credential $Cred
 
 
+
+"C:\Temp\One Identity Manager v8.1\DBTransporterCmd.exe" /File="C:\Temp\SHARED_VM\1_Transport-1566_v1.0.zip" /Conn="Data Source=WIN-DMTVK12KPU5;Initial Catalog=D2IMv7;User Id=sa_d1im;Password=Passw0rd!;" /Auth="Module=DialogUser;User=RobLooman;Password=Welcome01" -V	DBTransporterCmd
+
+C:\Temp\One Identity Manager v8.1>
+DBCompilerCMD /Conn="Data Source=WIN-DMTVK12KPU5;Initial Catalog=D2IMv7;User Id=sa_d1im;Password=Passw0rd!;" /Auth="Module=DialogUser;User=RobLooman;Password=Welcome01" 
+/BlackList=CompileWebProjects CompileAPIProjects CompileHTMLApps CompileWebServices CompileDialogscripts FillMultiLanguage -W /LogLevel=Debug
+
+
+
+
+
+[Reflection.Assembly]::LoadWithPartialName('System.IO.Compression.FileSystem')
+
+
+    [IO.Compression.ZipFile]::OpenRead("C:\Temp\SHARED_VM\1_Sync_AFAS.zip").Entries.FullName 
+   $TransportPackage =  [IO.Compression.ZipFile]::OpenRead("C:\Temp\SHARED_VM\1_Transport-1566_v1.0.zip").Entries -like "*TagTransport*"
+   $SyncProject =  [IO.Compression.ZipFile]::OpenRead("C:\Temp\SHARED_VM\1_Sync_AFAS.zip").Entries -like "*ShellTransport*"

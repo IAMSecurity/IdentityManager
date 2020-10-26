@@ -39,6 +39,7 @@ Function Connect-Jira($Server, [PSCredential] $Credential ) {
         $Headers.Add("Authorization","Basic $($EncodedText)")
     }
     # Connecting
+	
     Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/3/myself" -Method GET -UseDefaultCredentials -Headers $Headers -SessionVariable session  | Out-Null
 
     $Global:JC_Session = $session
@@ -48,27 +49,33 @@ Function Connect-Jira($Server, [PSCredential] $Credential ) {
 Function Find-JiraIssue($JQL, $Session = $global:JC_Session) {
 
     # Read 
-
-      Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/search?jql=$JQL" -WebSession $session -Method GET  -AllowUnencryptedAuthentication
-   
+	If($psversiontable.PSVersion.Major  -gt 6){
+		Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/search?jql=$JQL" -WebSession $session -Method GET  -AllowUnencryptedAuthentication
+	}else{
+		Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/search?jql=$JQL" -WebSession $session -Method GET 
+	}
 
 }
 
 Function Get-JiraIssue($ID, $Session = $global:JC_Session) {
 
     # Read 
-
+	If($psversiontable.PSVersion.Major  -gt 6){
       Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/issue/$ID" -WebSession $session -Method GET  -AllowUnencryptedAuthentication
-   
+	}else{
+		Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/search?jql=$JQL" -WebSession $session -Method GET 
+	}
 
 }
 
 Function Get-JiraComments($ID, $Session = $global:JC_Session) {
 
     # Read 
-
+	If($psversiontable.PSVersion.Major  -gt 6){
       Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/issue/$ID/comment" -WebSession $session -Method GET  -AllowUnencryptedAuthentication
-   
+	}else{
+		Invoke-RestMethod -Uri "$Global:JC_BaseURL/rest/api/2/search?jql=$JQL" -WebSession $session -Method GET 
+	}
 
 }
 
