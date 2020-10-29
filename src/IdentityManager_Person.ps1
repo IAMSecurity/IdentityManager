@@ -1,4 +1,8 @@
 ﻿
+
+
+
+
 Function Get-OIMPerson($Object, $UID, $CentralAccount,$PersonnelNumber, $FirstName,$Lastname, [switch] $full,[switch] $first){
 
     $arWhere = @()
