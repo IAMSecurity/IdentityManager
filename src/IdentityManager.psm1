@@ -46,7 +46,14 @@ Function Disconnect-OIM([WebRequestSession] $Session = $Global:OIM_Session) {
     Invoke-RestMethod -Uri "$Global:OIM_BaseURL/auth/logout" -WebSession $session -Method Post | Out-Null
 
 }
+Function Set-OIMGlobalVariable($Name,$Value, $Session = $Global:OIM_Session){
+    
+    $dicBody =  @{"Value"= $Value}    
+    $body = $dicBody | ConvertTo-Json
+    $result = Invoke-RestMethod -Uri "$Global:OIM_BaseURL/appserver/variable/$Name" -WebSession $session -Method PUT -Body $body -ContentType application/json
+   
 
+}
 Function Get-OIMObject($Object, $ObjectName, $Where, $OrderBy, $Session = $Global:OIM_Session, [switch]$First, [switch]$Full, $limit= 0, $offset =0) {
 
     # Read 
@@ -121,12 +128,29 @@ Function New-OIMObject($ObjectName, [hashtable] $Properties, $Session = $Global:
 
 }
 
-Function Remove-OIMObject($Object, $Session = $Global:OIM_Session) {
+Function Remove-OIMObject{
+    [CmdletBinding()]
+    Param(
+        [Parameter(ValueFromPipeline)]$Object, 
+        $Session = $Global:OIM_Session) 
 
+    if($null -eq $object){
+        Write-Warning "No objects to delete"
+        break
+    }
     # Read 
-    $uri = Get-OIMURI $object.Uri     
-    Invoke-RestMethod -Uri "$Global:OIM_BaseURL/$uri" -WebSession $session -Method Delete -ContentType application/json 
+    if($Object -is [array]){
+        ForEach($ChildObject in $Object){
+            
+            $uri = Get-OIMURI $ChildObject.Uri     
+            Write-Host $uri 
+            Invoke-RestMethod -Uri "$Global:OIM_BaseURL/$uri" -WebSession $session -Method Delete -ContentType application/json 
+        }
 
+    }else{
+        $uri = Get-OIMURI $object.Uri     
+        Invoke-RestMethod -Uri "$Global:OIM_BaseURL/$uri" -WebSession $session -Method Delete -ContentType application/json 
+    }
 }
 
 Function Update-OIMObject($Object, [hashtable] $Properties, $Session = $Global:OIM_Session) {
@@ -205,15 +229,27 @@ Function Set-OIMConfigParameter($FullPath,$value){
 
 
 
-Function Start-OIMSyncProject($SyncName,[switch]$wait){
+Function Start-OIMSyncProject($DisplayName,[switch]$wait){
     #DPRShell
     
-    $obj =  Get-OIMObject -ObjectName DialogSchedule -Where "displayname = '$SyncName "  -First -Full
+    $obj =  Get-OIMObject -ObjectName DPRProjectionStartInfo -Where "displayname = '$DisplayName'"  -First -Full
     
     Start-OIMEvent  -Object $obj -EventName run -Parameters @{}
 
     if($wait){
-        Wait-OIMJobQueue -Param $obj.uid
+        Wait-OIMJobQueue -JobChainName $obj.uid
+    }
+}
+
+Function Start-OIMSchedule($Name,[switch]$wait){
+    #DPRShell
+    
+    $obj =  Get-OIMObject -ObjectName DialogSchedule -Where "Name = '$Name'"  -First -Full
+    
+    Start-OIMEvent  -Object $obj -EventName run -Parameters @{}
+
+    if($wait){
+        Wait-OIMJobQueue -JobChainName $obj.uid
     }
 }
 
@@ -230,16 +266,17 @@ Function ConvertTo-OIMDate([DateTime] $Date){
 
 }
 
-Function Wait-OIMJobQueue($Param, $Session = $Global:OIM_Session){
+Function Wait-OIMJobQueue($JobChainName, $Session = $Global:OIM_Session){
 
 
     Sleep 3 
     $Timer = 300
-    $jobs =  Get-OIMObject -Session $session -ObjectName "JobQueue" -Where "JobChainName LIKE '%" + $parm +"%' AND Ready2EXE <> 'HISTORY' AND Ready2exe <> 'FINISHED'"
+    $where = "JobChainName LIKE '%" + $JobChainName +"%' AND Ready2EXE <> 'HISTORY' AND Ready2exe <> 'FINISHED'"
+    $jobs =  Get-OIMObject -ObjectName "JobQueue" -Where   $where 
     While($jobs.count -gt 0 -or $Timer -le 0){
         Sleep 5 
         $Timer--
-        $jobs =  Get-OIMObject -Session $session -ObjectName "JobQueue" -Where "JobChainName LIKE '%" + $parm +"%' AND Ready2EXE <> 'HISTORY' AND Ready2exe <> 'FINISHED'"
+        $jobs =  Get-OIMObject -Session $session -ObjectName "JobQueue" -Where  $where
     
     }
 }

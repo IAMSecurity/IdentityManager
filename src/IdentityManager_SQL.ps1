@@ -1,17 +1,17 @@
 
-Function Connect-OIMSQL($servername, $database, [PSCredential] $Cred ) {
+Function Connect-OIMSQL($servername, $database, [PSCredential] $Credential ) {
     
    
     $ConnectionSTring =  "server='$servername';database='$database';"
 
     # Creating connection string
-    if ($null -eq $Cred ) {
+    if ($null -eq $Credential ) {
         #Single sign
         $ConnectionSTring  = $ConnectionSTring + "integrated security=true"
     }else {
 
-        $user = $Cred.Username
-        $Pass = $Cred.GetNetworkCredential().password
+        $user = $Credential.Username
+        $Pass = $Credential.GetNetworkCredential().password
         
         $ConnectionSTring  = $ConnectionSTring + "trusted_connection=false; user= '$user'; Password = '$Pass'; integrated security='False'"
     }
