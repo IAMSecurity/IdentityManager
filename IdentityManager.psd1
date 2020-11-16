@@ -12,7 +12,7 @@
 RootModule = 'IdentityManager.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0'
+ModuleVersion = '1.0.202011'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -126,7 +126,6 @@ PrivateData = @{
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://www.iamsecurity.nl/IdentityManager'
 
         # A URL to an icon representing this module.
         # IconUri = ''
