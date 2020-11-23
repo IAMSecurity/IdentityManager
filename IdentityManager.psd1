@@ -12,7 +12,7 @@
 RootModule = 'IdentityManager.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.202011'
+ModuleVersion = '1.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,7 +69,8 @@ Description = 'Powershell Module for accessing One Identity'
 NestedModules = @(
     'IdentityManager_CMD.ps1',
     'IdentityManager_Person.ps1',
-    'IdentityManager_SQL.ps1'
+    'IdentityManager_SQL.ps1',
+    'IdentityManager_BusinessLayer.ps1'
 
 )
 
@@ -86,6 +87,13 @@ FunctionsToExport = @(
     "Set-OIMConfigParameter",
     "Update-OIMObject",
     "Wait-OIMJobQueue",
+    #BusinessLayer 
+    "Get-OIMPerson",
+    "Get-OIMEset",
+    "Get-OIMUNSAccountB",
+    "Get-OIMUNSGroupB",
+    "Get-OIMUNSAccountBInUNSGroupB",
+    "Add-OIMPersonHasEset",
     #CMD
     "Install-OIMTransportFiles",
     "Start-OIMScript",

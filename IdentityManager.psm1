@@ -118,11 +118,13 @@ Function Get-OIMURI($uri) {
 
 
 
-Function New-OIMObject($ObjectName, [hashtable] $Properties, $Session = $Global:OIM_Session) {
+Function New-OIMObject{
+    [CmdletBinding()] 
+    Param($ObjectName, [hashtable] $Properties, $Session = $Global:OIM_Session) 
 
     # Read 
     $body = @{values = $Properties } | ConvertTo-Json     
-    $item = Invoke-RestMethod -Uri "$Global:OIM_BaseURL/api/entity/$($ObjectName)" -WebSession $session -Method Post -ContentType application/json  -Body $body 
+    $item = Invoke-RestMethod -Uri "$Global:OIM_BaseURL/api/entity/$($ObjectName)" -WebSession $session -Method Post -ContentType application/json  -Body $body
       
     Get-OIMObjectfromURI -uri $item.uri -Session $session              
 
@@ -237,7 +239,8 @@ Function Start-OIMSyncProject($DisplayName,[switch]$wait){
     Start-OIMEvent  -Object $obj -EventName run -Parameters @{}
 
     if($wait){
-        Wait-OIMJobQueue -JobChainName $obj.uid
+        Wait-OIMJobQueue -JobChainName "DPR_DPRProjectionStartInfo_Run_Synchronization"
+        #Param in Contains obj.uid
     }
 }
 
