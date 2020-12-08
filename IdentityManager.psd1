@@ -12,7 +12,7 @@
 RootModule = 'IdentityManager.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.0'
+ModuleVersion = '1.1.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -100,6 +100,7 @@ FunctionsToExport = @(
     "Start-OIMMethod",
     "Start-OIMEvent",
     "Start-OIMScript",
+    "Start-OIMSyncProject",
     #SQL
     "Connect-OIMSQL",
     "Invoke-OIMSQLQuery")

@@ -236,11 +236,16 @@ Function Start-OIMSyncProject($DisplayName,[switch]$wait){
     
     $obj =  Get-OIMObject -ObjectName DPRProjectionStartInfo -Where "displayname = '$DisplayName'"  -First -Full
     
-    Start-OIMEvent  -Object $obj -EventName run -Parameters @{}
+    If ($null -eq $obj ){
+        Write-Warning "Sync start configuration not found ($displayname)"
 
-    if($wait){
-        Wait-OIMJobQueue -JobChainName "DPR_DPRProjectionStartInfo_Run_Synchronization"
-        #Param in Contains obj.uid
+    }else{
+        Start-OIMEvent  -Object $obj -EventName run -Parameters @{}
+
+        if($wait){
+            Wait-OIMJobQueue -JobChainName "DPR_DPRProjectionStartInfo_Run_Synchronization"
+            #Param in Contains obj.uid
+        }
     }
 }
 
