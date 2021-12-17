@@ -1,0 +1,45 @@
+TOPIC
+    about_IdentityManager
+
+SHORT DESCRIPTION
+    IdentityManager is a PowerShell interface for the One Identity REST API Web Services.
+
+LONG DESCRIPTION
+    IdentityManager sends requests to , and receives data from, a One Identity REST API Web Service.
+    It issues commands to the Web Service allowing a user to issue create, list, modify and delete operations to be
+    performed against entities in a One Identity Manager solution from either a PowerShell console or script.
+
+EXAMPLES
+    To use IdentityManager, access to a  One Identity REST API  Web Service, as well as a user account with which to
+    authenticate to the Web Service is required.
+
+
+    Authentication to the Web Service must take place before any other commands can be issued, every
+    subsequent call to the web service requires the resulting authorization token returned upon successful logon.
+
+    LOGON:
+
+    PS C:\> New-OIMSession -Credential $VaultCredentials -BaseURI https://PVWA_URL
+
+    Successful authentication with New-OIMSession results in the required authorization token value being made available to all subsequent calls to the API
+
+    PIPELINE OPERATIONS:
+
+    All functions of the module accept pipeline input, allowing chains of commands to be created.
+
+        Find and update a user:
+
+        PS C:\> Get-OIMObject pete | Set-OIMObject -Properties @{FirstName = "John"} 
+
+        Activate a Suspended CyberArk User:
+
+        PS C:\> Get-OIMObject -Object Person -Where "Firstname = 'PebKac'" | Unblock-OIMUser -Suspended $false
+
+      
+
+
+KEYWORDS
+    IdentityManager
+
+SEE ALSO
+    https://www.iamsecurity.nl

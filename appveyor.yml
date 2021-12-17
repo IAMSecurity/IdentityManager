@@ -1,0 +1,51 @@
+# version format
+version: 5.2.{build}
+
+environment:
+  #GIT_TRACE: 1
+  access_token:
+    secure: 111
+
+skip_tags: true
+
+skip_commits:
+  files:
+    - docs\*
+    - .github\*
+    - .vscode\*
+    - README.md
+    - LICENSE.md
+    - CONTRIBUTING.md
+    - CODE_OF_CONDUCT.md
+    - ISSUE_TEMPLATE.md
+    - PULL_REQUEST_TEMPLATE.md
+    - appveyor.yml
+    - CHANGELOG.md
+  message: /update readme.*|update version.*|update appveyor.*/
+
+only_commits:
+  files:
+    - build\
+    - psPAS\
+    - tests\
+
+image: Visual Studio 2019
+
+install:
+  #- ps: . .\build\install.ps1
+  - pwsh.exe -File .\build\install.ps1
+
+build_script:
+  #- ps: . .\build\build.ps1
+  - pwsh.exe -File .\build\build.ps1
+test_script:
+  #- ps: . .\build\test.ps1
+  - pwsh.exe -File .\build\test.ps1
+
+deploy_script:
+  #- ps: . .\build\deploy-github.ps1
+  - pwsh.exe -File .\build\deploy-github.ps1
+  - pwsh.exe -File .\build\deploy-psgallery.ps1
+
+#on_failure:
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

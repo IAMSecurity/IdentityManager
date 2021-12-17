@@ -12,7 +12,7 @@
 RootModule = 'IdentityManager.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.2'
+ModuleVersion = '3.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -33,7 +33,7 @@ Copyright = '(c) Rob Looman. All rights reserved.'
 Description = 'Powershell Module for accessing One Identity'
 
 # Minimum version of the PowerShell engine required by this module
-# PowerShellVersion = '5.0'
+PowerShellVersion = '5.1'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -65,29 +65,24 @@ Description = 'Powershell Module for accessing One Identity'
 # Format files (.ps1xml) to be loaded when importing this module
 # FormatsToProcess = @()
 
-# Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @(
-    'IdentityManager_CMD.ps1',
-    'IdentityManager_Person.ps1',
-    'IdentityManager_SQL.ps1',
-    'IdentityManager_BusinessLayer.ps1'
-
-)
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @(
     #Main
-    "Connect-OIM",
-    "Disconnect-OIM",
+    "New-OIMSession",
+    "Close-OIMSession",
     "Get-OIMObject",
+    "Get-OIMURI",
     "New-OIMObject",
     "Remove-OIMObject",
     "Add-OIMObjectMember",
     "Remove-OIMObjectMember",
     "Set-OIMConfigParameter",
-    "Update-OIMObject",
+    "Set-OIMGlobalVariable",  
+    "Start-OIMSchedule",
+    "Set-OIMObject",
     "Wait-OIMJobQueue",
-    #BusinessLayer 
+    #BusinessLayer
     "Get-OIMPerson",
     "Get-OIMEset",
     "Get-OIMUNSAccountB",
@@ -101,9 +96,19 @@ FunctionsToExport = @(
     "Start-OIMEvent",
     "Start-OIMScript",
     "Start-OIMSyncProject",
+    #Get
+    "Get-OIMUNSAccountB",
+    "Get-OIMTSBAccountDef",
+    "Get-OIMPersonHasTSBAccountDef",
+    "Get-OIMESet",
+    "Get-OIMPersonHasESet",
+    #New
+    "New-OIMPerson",
+    "New-OIMPersonHasEset",
     #SQL
     "Connect-OIMSQL",
-    "Invoke-OIMSQLQuery")
+    "Invoke-OIMSQLQuery",
+    "Invoke-DBCompiler")
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

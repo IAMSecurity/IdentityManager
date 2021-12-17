@@ -1,0 +1,10 @@
+{
+  "ModuleName": "IdentityManager",
+  "FormatFileName": "PSGet.Format",
+  "Culture": "en-US",
+  "BuildOutputPath": "out",
+  "SignedOutputPath": "unsigned",
+  "HelpPath": "help",
+  "TestPath": "test",
+  "SourcePath": "src"
+}
