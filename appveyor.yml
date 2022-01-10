@@ -40,11 +40,11 @@ build_script:
   - pwsh.exe -File .\build\build.ps1
 test_script:
   #- ps: . .\build\test.ps1
-  - pwsh.exe -File .\build\test.ps1
+  #- pwsh.exe -File .\build\test.ps1
 
 deploy_script:
   #- ps: . .\build\deploy-github.ps1
-  - pwsh.exe -File .\build\deploy-github.ps1
+  #- pwsh.exe -File .\build\deploy-github.ps1
   - pwsh.exe -File .\build\deploy-psgallery.ps1
 
 #on_failure:
