@@ -1,14 +1,15 @@
 function Get-OIMObject {
 	[CmdletBinding(SupportsPaging = $true, DefaultParameterSetName = "ObjectSearch")]
 	param(
-		[Parameter(Position = 0,
+		[Parameter(
 			ParameterSetName = "Object",
 			Mandatory = $true,
 			ValueFromPipeline = $true)]
 		$Object,
-		[Parameter(ParameterSetName = "ObjectSingle", Mandatory = $true)]
-		[Parameter(ParameterSetName = "ObjectSearch", Mandatory = $true)]
+		[Parameter(Position = 0,ParameterSetName = "ObjectSingle", Mandatory = $true)]
+		[Parameter(Position = 0,ParameterSetName = "ObjectSearch", Mandatory = $true)]
 		[Alias("Type")]
+		[string]
 		$ObjectName,
 		[Parameter(ParameterSetName = "ObjectSingle", Mandatory = $true)]
 		[Alias("uid")]
@@ -52,16 +53,24 @@ function Get-OIMObject {
 
 
 			'ObjectSearch' {
-				$URI = "$Script:BaseURI/api/entity/$ObjectName"
-				$queryString = $PSBoundParameters | Get-OIMParameter -ParametersToKeep  loadType, limit, offset | ConvertTo-QueryString
-				$body = $PSBoundParameters | Get-OIMParameter -ParametersToKeep  where, displayColumns | ConvertTo-QueryString
-
+				$URI = "$Script:BaseURI/api/entities/$ObjectName`?LoadType=$LoadType"
+				$queryString = $PSBoundParameters | Get-OIMParameter -ParametersToKeep  LoadType, limit, offset | ConvertTo-QueryString
+				Write-Verbose ($PSBoundParameters.Keys -Join "-")
 				if ($null -ne $queryString) {
 					#Build URL from base URL
-					$URI = "$URI`?$queryString"
+					$URI = "$URI&$queryString"
 
 				}
-				$result = Invoke-OIMRestMethod -Uri $URI -Method POST -Body $body -WebSession $Script:WebSession
+
+				$body = $PSBoundParameters | Get-OIMParameter -ParametersToKeep  where, displayColumns | ConvertTo-Json
+
+
+				if($null -eq $body){
+					$result = Invoke-OIMRestMethod -Uri $URI -WebSession $Script:WebSession
+				}else{
+					$result = Invoke-OIMRestMethod -Uri $URI -Method POST -Body $body -ContentType 'application/json' -WebSession $Script:WebSession
+
+				}
 			}
 
 		}
@@ -72,9 +81,8 @@ function Get-OIMObject {
 
 
 		If ($null -ne $result) {
-
 			#$result | Add-ObjectDetail -typename $TypeName
-			$result | Select-Object @SelectPAram
+			$result.Values | Select-Object @SelectPAram
 		}
 
 	}#process

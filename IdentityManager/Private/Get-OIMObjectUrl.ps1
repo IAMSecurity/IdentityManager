@@ -1,4 +1,4 @@
-Functio Get-OIMObjectUrl {
+Function Get-OIMObjectUrl {
     Param($object)
     ForEach($item in $object.xObjectKey){
 					

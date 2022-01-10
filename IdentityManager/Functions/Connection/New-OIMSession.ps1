@@ -43,7 +43,7 @@ function New-OIMSession {
 
 		#Define Logon Request Parameters
 		$LogonRequest['Method'] = 'POST'
-		$LogonRequest['SessionVariable'] = 'OIMSession'
+		$LogonRequest['SessionVariable'] = 'WebSession'
 		$LogonRequest['UseDefaultCredentials'] = $true
 		$LogonRequest['SkipCertificateCheck'] = $SkipCertificateCheck.IsPresent
 
@@ -68,7 +68,7 @@ function New-OIMSession {
 
         $LogonRequest['Uri'] = "$Uri/auth/apphost"  #hardcode Windows for integrated auth
         $LogonRequest['Body'] = $authJson.ToString()
-
+        $LogonRequest['Body']
 
 		if ($PSCmdlet.ShouldProcess($LogonRequest['Uri'], 'Logon')) {
 
@@ -77,28 +77,9 @@ function New-OIMSession {
 				#Send Logon Request
 				$OIMSession = Invoke-OIMRestMethod @LogonRequest
 
-				If ($null -ne $PASSession.UserName) {
 
-					#*$PASSession is expected to be a string value
-					#*For IIS Windows auth:
-					#*An object with a username property can be returned if a secondary authentication is required
 
-					If ($PSCmdlet.ParameterSetName -match 'Radius$') {
 
-						#If RADIUS parameters are specified
-						#Prepare RADIUS auth request
-						$LogonRequest['Uri'] = "$Uri/api/Auth/RADIUS/Logon"
-
-						#Use WebSession from initial request
-						$LogonRequest.Remove('SessionVariable')
-						$LogonRequest['WebSession'] = $Script:WebSession
-
-						#Submit initial RADIUS auth request
-						$PASSession = Invoke-PASRestMethod @LogonRequest
-
-					}
-
-				}
 
 			} catch {
 
@@ -113,6 +94,7 @@ function New-OIMSession {
 
 					#BaseURI set in Module Scope
 					Set-Variable -Name BaseURI -Value $Uri -Scope Script
+					Set-Variable -Name WebSession -Value $WebSession -Scope Script
 
 					#Initial Value for Version variable
 					[System.Version]$Version = '0.0'
@@ -122,7 +104,7 @@ function New-OIMSession {
 						Try {
 
 							#Get CyberArk ExternalVersion number.
-							[System.Version]$Version = Get-OIMObject -ObjectName DialogDatabase -ErrorAction Stop |
+							[System.Version]$Version = Get-OIMObject DialogDatabase -ErrorAction Stop |
 								Select-Object -ExpandProperty EditionVersion
 
 						} Catch { [System.Version]$Version = '0.0' }

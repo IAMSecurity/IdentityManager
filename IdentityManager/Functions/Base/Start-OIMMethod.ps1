@@ -17,7 +17,7 @@ Function Start-OIMMethod{
 		    $URI = "$Script:BaseURI/api/entity/$($xmlXObjectKey.key.T)/$($xmlXObjectKey.key.P)/method/$methodname"
 
             If($PSCmdlet.ShouldProcess($xmlXObjectKey , "Start-OIMMethod $MethodName")){
-                Invoke-OIMRestMethod -Uri $uri -Method put -Body $body  | out-Null
+                Invoke-OIMRestMethod -Uri $uri -Method put -Body $body  -WebSession $Script:WebSession -SkipContentType| out-Null
 
             }
         }

@@ -110,11 +110,6 @@
 		$ProgressPreference = 'SilentlyContinue'
 		$PSBoundParameters.Add('UseBasicParsing', $true)
 
-		if ( -not ($PSBoundParameters.ContainsKey('ContentType'))) {
-
-			$PSBoundParameters.Add('ContentType', 'application/json')
-
-		}
 
 		#Bypass strict RFC header parsing in PS Core
 		#Use TLS 1.2
@@ -205,6 +200,14 @@
 		try {
 
 			#make web request, splat PSBoundParameters
+			If (($PSBoundParameters.ContainsKey('Body')) -and (($PSBoundParameters['Body']).GetType().Name -eq 'Hashtable')) {
+
+
+				$PSBoundParameters['Body'] = [System.Text.Encoding]::UTF8.GetBytes(($body  | ConvertTo-Json))
+
+			}
+
+
 			$APIResponse = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
 
 		} catch [System.UriFormatException] {

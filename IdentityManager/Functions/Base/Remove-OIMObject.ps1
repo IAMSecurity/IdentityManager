@@ -16,10 +16,10 @@ Function Remove-OIMObject{
 
 			    $xmlXObjectKey = 	[xml] $xObjectkey
 
-            $URI = "$Script:BaseURI/api/entity/$($xmlXObjectKey.key.T))/$($xmlXObjectKey.key.P))"
+            $URI = "$Script:BaseURI/api/entity/$($xmlXObjectKey.key.T)/$($xmlXObjectKey.key.P -join ';')"
             if ($max -gt 0 -and $PSCmdlet.ShouldProcess($xmlXObjectKey , "removing object")) {
                 $max--
-                Invoke-OIMRestMethod -Uri  $URI -Method Delete
+                Invoke-OIMRestMethod -Uri  $URI -Method Delete -WebSession $Script:WebSession
             }
 		}
     }

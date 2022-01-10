@@ -15,7 +15,6 @@ param(
 	[bool]$DotSourceModule = $false
 
 )
-
 #Get function files
 Get-ChildItem $PSScriptRoot\ -Recurse -Include "*.ps1" -Exclude "*.ps1xml" |
 

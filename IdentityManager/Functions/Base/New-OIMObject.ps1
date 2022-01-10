@@ -26,11 +26,11 @@
 			if ($PSCmdlet.ShouldProcess($ObjectName, 'Create Object')) {
 
 				#send request to web service
-				$result = Invoke-OIMRestMethod -Uri $URI -Method POST -Body $Body -WebSession $Script:WebSession
+				$result = Invoke-OIMRestMethod -Uri $URI -Method POST -Body $Body -WebSession $Script:WebSession -ContentType 'application/json'
 
 				If ($null -ne $result) {
 
-					$result
+					Get-OIMObject -Objectname $ObjectName -id $result.uid
 
 				}
 

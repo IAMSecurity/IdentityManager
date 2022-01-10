@@ -24,7 +24,7 @@
 		$body =  @{"Value"= $Value}
 		#Get request parameters
 		if ($PSCmdlet.ShouldProcess("uri", "Set-OIMGlobalVariable $Name")) {
-			Invoke-OIMRestMethod -Uri  $uri  -Method PUT -Body $body
+			Invoke-OIMRestMethod -Uri  $uri  -Method PUT -Body $body -WebSession $Script:WebSession
 		}
 
 

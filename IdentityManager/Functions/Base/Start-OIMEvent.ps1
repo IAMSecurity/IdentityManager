@@ -18,7 +18,7 @@ Function Start-OIMEvent{
 		    $URI = "$Script:BaseURI/api/entity/$($xmlXObjectKey.key.T)/$($xmlXObjectKey.key.P)/event/$EventName"
 
             If($PSCmdlet.ShouldProcess($xmlXObjectKey , "Start-OIMEvent $EventName")){
-                Invoke-OIMRestMethod -Uri $uri -Method put -Body $body  | out-Null
+                Invoke-OIMRestMethod -Uri $uri -Method put -Body $body -WebSession $Script:WebSession | out-Null
 
             }
         }

@@ -14,9 +14,10 @@
 
 			$xmlXObjectKey = 	[xml] $xObjectkey
 
-            $URI = "$Script:BaseURI/api/entity/$($xmlXObjectKey.key.T))/$($xmlXObjectKey.key.P))"
+            $URI = "$Script:BaseURI/api/entity/$($xmlXObjectKey.key.T)/$($xmlXObjectKey.key.P)"
 			if ($PSCmdlet.ShouldProcess($item.uri , "Update Object")) {
-                Invoke-OIMRestMethod -Uri $URI -Method Put -Body $body  |Out-Null
+                Invoke-OIMRestMethod -Uri $URI -Method Put -Body $body  -WebSession $Script:WebSession
+                Get-OIMObject -ObjectName $xmlXObjectKey.key.T -id $xmlXObjectKey.key.P
 			}
 		}
 

@@ -78,7 +78,7 @@ FunctionsToExport = @(
     "Add-OIMObjectMember",
     "Remove-OIMObjectMember",
     "Set-OIMConfigParameter",
-    "Set-OIMGlobalVariable",  
+    "Set-OIMGlobalVariable",
     "Start-OIMSchedule",
     "Set-OIMObject",
     "Wait-OIMJobQueue",
@@ -108,7 +108,9 @@ FunctionsToExport = @(
     #SQL
     "Connect-OIMSQL",
     "Invoke-OIMSQLQuery",
-    "Invoke-DBCompiler")
+    "Invoke-DBCompiler",
+    #
+    "Install-OIMFunction" )
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
