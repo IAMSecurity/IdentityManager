@@ -55,20 +55,19 @@ function New-OIMSession {
 	}#begin
 
 
-    # Connecting
+	# Connecting
 
 
 	PROCESS {
 
-        $authdata = @{AuthString = "Module=$Module" }
-        if ($null -ne $Credential ) {
-            $authdata =@{AuthString = "Module=$Module;User=$($Credential.Username);Password=$($Credential.GetNetworkCredential().password)" }
-        }
-        $authJson  = ConvertTo-Json $authdata -Depth 2
+		$authdata = @{AuthString = "Module=$Module" }
+		if ($null -ne $Credential ) {
+			$authdata = @{AuthString = "Module=$Module;User=$($Credential.Username);Password=$($Credential.GetNetworkCredential().password)" }
+		}
+		$authJson = ConvertTo-Json $authdata -Depth 2
 
-        $LogonRequest['Uri'] = "$Uri/auth/apphost"  #hardcode Windows for integrated auth
-        $LogonRequest['Body'] = $authJson.ToString()
-        $LogonRequest['Body']
+		$LogonRequest['Uri'] = "$Uri/auth/apphost"  #hardcode Windows for integrated auth
+		$LogonRequest['Body'] = $authJson.ToString()
 
 		if ($PSCmdlet.ShouldProcess($LogonRequest['Uri'], 'Logon')) {
 
@@ -81,13 +80,15 @@ function New-OIMSession {
 
 
 
-			} catch {
+			}
+			catch {
 
-                #Throw all errors not related to ITATS542I
-                throw $PSItem
+				#Throw all errors not related to ITATS542I
+				throw $PSItem
 
 
-			} finally {
+			}
+			finally {
 
 				#If Logon Result
 				If ($OIMSession) {
@@ -105,9 +106,10 @@ function New-OIMSession {
 
 							#Get CyberArk ExternalVersion number.
 							[System.Version]$Version = Get-OIMObject DialogDatabase -ErrorAction Stop |
-								Select-Object -ExpandProperty EditionVersion
+							Select-Object -ExpandProperty EditionVersion
 
-						} Catch { [System.Version]$Version = '0.0' }
+						}
+						Catch { [System.Version]$Version = '0.0' }
 
 					}
 

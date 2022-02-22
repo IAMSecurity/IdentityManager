@@ -207,9 +207,8 @@
 
 			}
 
-
+			Write-Verbose "Invoke-WebRequest: $($PSBoundParameters["uri"]) ($($PSBoundParameters["method"]))"
 			$APIResponse = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
-
 		} catch [System.UriFormatException] {
 
 			#Catch URI Format errors. Likely $Script:BaseURI is not set; New-OIMSession should be run.

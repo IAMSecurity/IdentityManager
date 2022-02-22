@@ -82,6 +82,7 @@ FunctionsToExport = @(
     "Start-OIMSchedule",
     "Set-OIMObject",
     "Wait-OIMJobQueue",
+    "Wait-OIMObject",
     #BusinessLayer
     "Get-OIMPerson",
     "Get-OIMEset",
