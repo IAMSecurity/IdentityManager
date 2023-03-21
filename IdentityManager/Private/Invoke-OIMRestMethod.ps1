@@ -86,7 +86,7 @@
 		[switch]$UseDefaultCredentials,
 
 		[Parameter(Mandatory = $false)]
-		[PSCredential]$Credential,
+		[PSCredential]$Credential = $script:IISCredential,
 
 		[Parameter(Mandatory = $false)]
 		[int]$TimeoutSec,
@@ -109,7 +109,9 @@
 		#Set defaults for all function calls
 		$ProgressPreference = 'SilentlyContinue'
 		$PSBoundParameters.Add('UseBasicParsing', $true)
-
+		if($null -ne $Credential){
+			Write-Warning "Invoke-OIMRestMethod: Use different credentials"
+		}
 
 		#Bypass strict RFC header parsing in PS Core
 		#Use TLS 1.2

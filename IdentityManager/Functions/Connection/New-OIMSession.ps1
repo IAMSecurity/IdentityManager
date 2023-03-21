@@ -24,6 +24,14 @@ function New-OIMSession {
 			ValueFromPipeline = $false,
 			ValueFromPipelinebyPropertyName = $false
 		)]
+		[pscredential]$IISCredential,
+
+
+		[Parameter(
+			Mandatory = $false,
+			ValueFromPipeline = $false,
+			ValueFromPipelinebyPropertyName = $false
+		)]
 		[switch]$SkipVersionCheck,
 
 		[parameter(
@@ -44,7 +52,10 @@ function New-OIMSession {
 		#Define Logon Request Parameters
 		$LogonRequest['Method'] = 'POST'
 		$LogonRequest['SessionVariable'] = 'WebSession'
-		$LogonRequest['UseDefaultCredentials'] = $true
+		if($null -eq $IISCredential){
+
+			$LogonRequest['UseDefaultCredentials'] = $true
+		}
 		$LogonRequest['SkipCertificateCheck'] = $SkipCertificateCheck.IsPresent
 
 
@@ -68,18 +79,16 @@ function New-OIMSession {
 
 		$LogonRequest['Uri'] = "$Uri/auth/apphost"  #hardcode Windows for integrated auth
 		$LogonRequest['Body'] = $authJson.ToString()
-
+		
+		if ($null -ne $IISCredential ) {
+			$LogonRequest['Credential'] = $IISCredential
+			Write-Warning "Using IIS credentials"
+		}
 		if ($PSCmdlet.ShouldProcess($LogonRequest['Uri'], 'Logon')) {
 
 			try {
-
 				#Send Logon Request
 				$OIMSession = Invoke-OIMRestMethod @LogonRequest
-
-
-
-
-
 			}
 			catch {
 
@@ -96,6 +105,7 @@ function New-OIMSession {
 					#BaseURI set in Module Scope
 					Set-Variable -Name BaseURI -Value $Uri -Scope Script
 					Set-Variable -Name WebSession -Value $WebSession -Scope Script
+					Set-Variable -Name IISCredential -Value $IISCredential -Scope Script
 
 					#Initial Value for Version variable
 					[System.Version]$Version = '0.0'
